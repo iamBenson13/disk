@@ -14,4 +14,17 @@
         SELECT * FROM FEATURE WHERE feature_id = #{fid,jdbcType=VARCHAR};
     </select>
 
+    <insert id="insertNewFeature" parameterType="kohgylw.kiftd.server.model.Feature">
+		INSERT INTO FEATURE
+		VALUES(#{featureId,jdbcType=VARCHAR},#{featureName,jdbcType=VARCHAR});
+	</insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+		DELETE FROM FEATURE WHERE feature_id=#{featureId,jdbcType=VARCHAR}
+	</delete>
+
+    <update id="updateFeatureNameById" parameterType="java.util.Map">
+		UPDATE FEATURE SET feature_name = #{newFeatureName,jdbcType=VARCHAR} WHERE feature_id
+		= #{featureId,jdbcType=VARCHAR}
+	</update>
 </mapper>
