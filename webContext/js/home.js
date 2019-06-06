@@ -37,6 +37,7 @@ $(function () {
     getCountry();//获取所有国家（wzy）
     getFeature();//获取所有功能（wzy）
 
+
     // 点击空白处取消选中文件（已尝试兼容火狐，请期待用户反馈，如不好使再改）
     $(document).click(function (e) {
         var filetable = $("#filetable")[0];
@@ -155,6 +156,7 @@ $(function () {
             $("#editfoldertypelist").append("<li><a onclick='changeEditFolderType(0)'>" + folderTypes[0] + "</a></li>");
         }
     });
+
     // 响应拖动上传文件
     document.ondragover = function (e) {
         if (e.preventDefault) {
@@ -758,6 +760,9 @@ function returnPF() {
     }
 }
 
+
+
+
 // 显示文件夹内容
 function showFolderTable(folderView) {
     $("#foldertable").html("");
@@ -1010,11 +1015,71 @@ function showFolderTable(folderView) {
 
 var folderTypes = ['公开的', '仅小组', '仅创建者'];// 文件夹约束条件（由小至大）
 
+//功能模态框(YBS)
+function showNewFeatureModel(){
+    $('#newFeatureModal').modal('show');
+}
+//创建新的功能(YBS)
+function createfeature(){
+    var fen = $("#featurename").val();
+    if(fen.length == 0){
+        showFeatureAlert("提示：功能名称不能为空。");
+    }else if (fen.length > 20) {
+        showFeatureAlert("提示：功能名称太长。");
+    }else if (fen.indexOf(".") != 0){
+        $("#featurealert").removeClass("alert");
+        $("#featurealert").removeClass("alert-danger");
+        $("#featurenamebox").removeClass("has-error");
+        $("#ffeaturealert").text("");
+        $.ajax({
+            type: "POST",
+            dataType: "text",
+            data: {
+                featureName: fen
+            },
+            url: "homeController/newFeature.ajax",
+            success: function (result) {
+                if (result == "mustLogin") {
+                    window.location.href = "login.html";
+                } else {
+                    if (result == "noAuthorized") {
+                        showFeatureAlert("提示：您的操作未被授权，创建文件夹失败。");
+                    } else if (result == "errorParameter") {
+                        showFeatureAlert("提示：参数不正确，创建文件夹失败。");
+                    } else if (result == "cannotCreateFeature") {
+                        showFeatureAlert("提示：出现意外错误，可能未能创建文件夹。");
+                    } else if (result == "nameOccupied") {
+                        showFeatureAlert("提示：该名称已被占用，请选取其他名称。");
+                    }
+                    else {
+                        $('#newFeatureModal').modal('hide');
+                        getFeature();
+                    }
+                }
+            },
+            error: function () {
+                showFeatureAlert("提示：出现意外错误，可能未能创建文件夹");
+            }
+        });
+    } else {
+        showFeatureAlert("提示：文件夹名中不应含有：空格 引号 / \ * | < > & $ : ? 且不能以“.”开头。");
+    }
+}
+// 显示新建功能状态提示(YBS)
+function showFeatureAlert(txt) {
+    $("#featurealert").addClass("alert");
+    $("#featurealert").addClass("alert-danger");
+    $("#featurenamebox").addClass("has-error");
+    $("#featurealert").text(txt);
+}
+
+
+
+
 // 显示新建文件夹模态框
 function showNewFolderModel() {
     $('#newFolderModal').modal('show');
 }
-
 // 修改新建文件夹约束等级
 function changeNewFolderType(type) {
     $("#newfoldertype").text(folderTypes[type]);
@@ -1085,58 +1150,6 @@ function showFolderAlert(txt) {
 // 进入某一文件夹
 function entryFolder(folderId) {
     showFolderView(folderId);
-}
-
-// 显示删除文件夹模态框
-function showDeleteFolderModel(folderId, folderName) {
-    $('#deleteFolderBox')
-        .html(
-            "<button id='dmbutton' type='button' class='btn btn-danger' onclick='deleteFolder("
-            + '"' + folderId + '"' + ")'>删除</button>");
-    $("#dmbutton").attr('disabled', false);
-    $('#deleteFolderMessage').text(
-        "提示：确定要彻底删除文件夹：[" + folderName + "]及其全部内容么？该操作不可恢复");
-    $('#deleteFolderModal').modal('toggle');
-}
-
-// 执行删除文件夹
-function deleteFolder(folderId) {
-    $("#dmbutton").attr('disabled', true);
-    $('#deleteFolderMessage').text("提示：正在删除，请稍候...");
-    $.ajax({
-        type: "POST",
-        dataType: "text",
-        data: {
-            folderId: folderId
-        },
-        url: "homeController/deleteFolder.ajax",
-        success: function (result) {
-            if (result == "mustLogin") {
-                window.location.href = "login.html";
-            } else {
-                if (result == "noAuthorized") {
-                    $('#deleteFolderMessage').text("提示：您的操作未被授权，删除文件夹失败");
-                    $("#dmbutton").attr('disabled', false);
-                } else if (result == "errorParameter") {
-                    $('#deleteFolderMessage').text("提示：参数不正确，删除文件夹失败");
-                    $("#dmbutton").attr('disabled', false);
-                } else if (result == "cannotDeleteFolder") {
-                    $('#deleteFolderMessage').text("提示：出现意外错误，可能未能删除文件夹");
-                    $("#dmbutton").attr('disabled', false);
-                } else if (result == "deleteFolderSuccess") {
-                    $('#deleteFolderModal').modal('hide');
-                    showFolderView(locationpath);
-                } else {
-                    $('#deleteFolderMessage').text("提示：出现意外错误，可能未能删除文件夹");
-                    $("#dmbutton").attr('disabled', false);
-                }
-            }
-        },
-        error: function () {
-            $('#deleteFolderMessage').text("提示：出现意外错误，可能未能删除文件夹");
-            $("#dmbutton").attr('disabled', false);
-        }
-    });
 }
 
 // 显示重命名文件夹模态框
@@ -2456,8 +2469,6 @@ function selectInThisPath(keyworld) {
         $("#sortByFN").removeClass();
         $("#sortByCD").removeClass();
         $("#sortByFS").removeClass();
-        $("#sortByFC").removeClass();
-        $("#sortByFF").removeClass();
         $("#sortByCN").removeClass();
         folderView = $.extend(true, {}, screenedFoldrView);
         showFolderTable(folderView);
@@ -2506,8 +2517,6 @@ function selectInCompletePath(keyworld) {
                 $("#sortByFN").removeClass();
                 $("#sortByCD").removeClass();
                 $("#sortByFS").removeClass();
-                $("#sortByFC").removeClass();
-                $("#sortByFF").removeClass();
                 $("#sortByCN").removeClass();
                 showFolderTable(folderView);
             }
