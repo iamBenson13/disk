@@ -93,6 +93,7 @@
 										onclick="doSearchFile()">搜索</button>
 								</form>
 								<ul class="nav navbar-nav navbar-right">
+									<li id="fBox"><button class='btn btn-link navbar-btn' onclick="javascrtpt:window.location.href='feature.html'"><span class='glyphicon glyphicon-cog'></span> 功能编辑</button></li>
 									<li id="packageDownloadBox"></li>
 									<li class="dropdown" id="operationMenuBox"
 										data-toggle="popover"><a class="dropdown-toggle"
@@ -103,15 +104,19 @@
 										<ul class="dropdown-menu" id="fileListDropDown">
 											<li id="createFolderButtonLi"><a>新建文件夹 <span
 													class="pull-right"><span
-														class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>+N</span></a></li>
+														class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>+C</span></a></li>
 											<li role="separator" class="divider"></li>
 											<li id="uploadFileButtonLi"><a>上传文件 <span
 													class="pull-right"><span
 														class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>+U</span></a></li>
 											<li role="separator" class="divider"></li>
+<!--											<li id="createFeatureButtonLi"><a>新增功能<span-->
+<!--													class="pull-right"><span-->
+<!--													class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>+A</span></a></li>-->
+<!--											<li role="separator" class="divider"></li>-->
 											<li id="cutFileButtonLi"><a><span id='cutSignTx'>剪切
 														<span class="pull-right"><span
-															class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>+C</span>
+															class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>+M</span>
 												</span></a></li>
 											<li id="deleteSeelectFileButtonLi"><a>删除 <span
 													class="pull-right"><span
@@ -133,7 +138,7 @@
 								<th class="hiddenColumn" onclick="sortbyfc()">国家<span
 									id="sortByFC" aria-hidden="true" style="float: right"></span></th>
 								<th onclick="sortbyff()">功能<span id="sortByFF"
-									aria-hidden="true" style="float: right"></span></th>	
+									aria-hidden="true" style="float: right"></span></th>
 								<th class="hiddenColumn" onclick="sortbycn()">创建者<span
 									id="sortByCN" aria-hidden="true" style="float: right"></span></th>
 								<th onclick="showOriginFolderView()">操作</th>
@@ -146,7 +151,6 @@
 		</div>
 	</div>
 	<!-- end 显示主体 -->
-
 	<!-- 登录模态框 -->
 	<div class="modal fade bs-example-modal-sm" id="loginModal"
 		tabindex="-1" role="dialog" aria-labelledby="loginModelTitle">
@@ -266,6 +270,42 @@
 		</div>
 	</div>
 	<!-- end 创建文件夹 -->
+	<!-- 增加功能框 -->
+	<div class="modal fade" id="newFeatureModal" tabindex="-1" role="dialog"
+		 aria-labelledby="newFeatureMolderTitle">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="newFeatureMolderTitle">
+						<span class="glyphicon glyphicon-folder-open"></span> 功能
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal">
+						<div class="form-group" id="featurenamebox">
+							<label for="featureid" id="featurenametitle"
+								   class="col-sm-3 control-label">编辑新功能：</label>
+							<div class="col-sm-9">
+									<input type="text" class="form-control" id="featurename"
+										   placeholder="请输入功能的名称……" >
+							</div>
+						</div>
+						<div id="featurealert" role="alert"></div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary"
+							onclick="createfeature()">新增</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end 增加功能框 -->
 	<!-- 删除文件夹提示框 -->
 	<div class="modal fade bs-example-modal-sm" id="deleteFolderModal"
 		tabindex="-1" role="dialog" aria-labelledby="deleteFolderModelTitle">
