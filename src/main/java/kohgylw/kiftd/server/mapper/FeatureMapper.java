@@ -14,4 +14,10 @@ public interface FeatureMapper {
    List<Feature> getFeatures();
 
    Feature getFeaturesById(final String fid);
+
+   int insertNewFeature(final Feature f);
+
+   int deleteById(final String featureId);
+
+   int updateFeatureNameById(final Map<String, String> map);
 }
